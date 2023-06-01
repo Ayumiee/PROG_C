@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-#include "decoupe.h"
+#include "decoupe.c"
 
 #define NBMOTSMAX 20
 
@@ -16,33 +16,30 @@ int main(int argc, char *argv[]) {
 
 
   char *tab[NBMOTSMAX+1];
-  pid_t pidpere = getpid();
   int retour;
 
   for(int i=1;i<argc;i++){
 
     pid_t pidfork=fork();
 
-    if (pidfork==-1){pidfils
+    if (pidfork==-1){
       perror("fork");
       exit(1);
     }
 
-    printf("[%d] J'ai délégué %s à %d. J'attends sa fin..\n",pidpere,tab[0],pidfork);
+    printf("[%d] J'ai délégué %s à %d. J'attends sa fin..\n",getpid(),tab[0],pidfork);
+   // !! pere et fils ?
 
     if (pidfork==0){
       Decoupe(argv[i],tab);
-
-      pid_t pidfils= getpid();
-
-      printf("[%d] Je lance %s :\n",pidfils,tab[0]);
+      printf("[%d] Je lance %s :\n",getpid(),tab[0]);
       execvp(tab[0],tab);
       exit(0);
     }
 
     wait(&retour);
-    printf("[%d] %d terminé\n",pidpere,pidfork);
+    printf("[%d] %d terminé\n",getpid(),pidfork);
   }
-  printf("[%d] J'ai fini",pidpere);
+  printf("[%d] J'ai fini\n",getpid());
   return 0;
 }
