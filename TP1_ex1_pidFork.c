@@ -12,7 +12,9 @@ void AfficherInfo(void){
     char* login = getlogin();
     uid_t uid = getuid();
     gid_t gid= getgid();
-    printf("PID : %d\nPID père: %d\nPID groupe: %d\n",pid,pidpere,pidgroupe);
+    printf("PID : %d\n",pid);
+    printf("PID père : %d\n",pidpere);
+    printf("PID groupe: %d\n",pidgroupe);
     printf("LOGIN : %s\n",login);
     printf("UID : %d\n",uid);
     printf("GID : %d\n",gid);
@@ -25,7 +27,6 @@ int main(int argc, char const *argv[])
     pid_t pid=fork();
     if (pid==-1){
         perror("erreur fork");
-        printf("[FILS] Code de retour 1");
         exit(1);
     }
     if (pid==0){
@@ -33,8 +34,9 @@ int main(int argc, char const *argv[])
         printf("[FILS] j'ai fini, Mon code de retour est 0\n");
         exit(0);
     }
-    wait(&retour);
-    printf("[PERE] mon fils est terminé, son code de retour : %d\n",WEXITSTATUS(retour));
-    printf("[PERE] J'ai fini, Mon code de retour est 0\n");
+    while ((pid=wait(&retour))!=-1) {
+        printf("[PERE] mon fils est terminé, son code de retour : %d\n",WEXITSTATUS(retour));
+        printf("[PERE] J'ai fini, Mon code de retour est 0\n");
+    }
     exit(0);
 }
