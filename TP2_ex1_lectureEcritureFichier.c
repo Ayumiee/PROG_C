@@ -7,10 +7,12 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#define TAILLE_BLOC 1000
+
 void ecrire_dans_stdout ( char nom_fich[] ){
     int exit_status;
 
-    char bloc;
+    char bloc[TAILLE_BLOC];
 
     int ouverture = open(nom_fich,O_RDONLY);
     if (ouverture==-1){
@@ -21,7 +23,7 @@ void ecrire_dans_stdout ( char nom_fich[] ){
     int nbLu=0;
     int nbEcrits=0;
     while (nbLu=read(ouverture,&bloc,sizeof(bloc))){
-        if (nbEcrits=write(STDOUT_FILENO,&bloc,sizeof(bloc))==-1){
+        if (nbEcrits=write(STDOUT_FILENO,&bloc,nbLu)==-1){
             perror("erreur écriture");
             exit(3);
         };
